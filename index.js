@@ -45,7 +45,37 @@ function resetCanvas() {
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  drawFlower();
+
+}
+
+function drawFlower() {
+
+  const points = getPointsForN(getNValue());
+
   drawCenterCircle();
+
+  points.forEach(point => {
+    drawCircle(point);
+  });
+
+}
+
+function getPointsForN(n) {
+
+  const points = [],
+    center = getCanvasCenter(),
+    segmentAngleRadian = 2 * Math.PI / n,
+    circleRadius = getCircleRadius();
+
+  for (let i = 1; i <= n; i++) {
+    points.push({
+      x: center.x + circleRadius * Math.cos(i * segmentAngleRadian),
+      y: center.y + circleRadius * Math.sin(i * segmentAngleRadian)
+    });
+  }
+
+  return points;
 
 }
 
