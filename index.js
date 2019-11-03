@@ -45,10 +45,37 @@ function resetCanvas() {
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  drawCenterCircle();
+
+}
+
+function drawCenterCircle() {
+
+  const center = getCanvasCenter();
+
+  drawCircle(center);
+
+}
+
+function drawCircle(center) {
+
+  const radius = getCircleRadius();
+
+  ctx.strokeStyle = 'white';
+  ctx.beginPath();
+  ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
+  ctx.stroke();
+
 }
 
 function getCanvasCenter() {
   return { x: canvas.width / 2, y: canvas.height / 2 };
+}
+
+function getCircleRadius() {
+  return canvas.width > canvas.height
+    ? canvas.height / 5
+    : canvas.width / 5;
 }
 
 window.onload = () => init();
