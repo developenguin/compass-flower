@@ -45,15 +45,23 @@ function resetCanvas() {
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  drawFlower();
+  drawFigure(getCanvasCenter());
 
 }
 
-function drawFlower() {
+function drawFigure(center) {
 
-  const points = getPointsForN(getNValue());
+  const points = getPointsForN(getNValue(), center);
 
-  drawCenterCircle();
+  points.forEach(point => {
+    drawFlower(point);
+  });
+
+}
+
+function drawFlower(center) {
+
+  const points = getPointsForN(getNValue(), center);
 
   points.forEach(point => {
     drawCircle(point);
@@ -61,10 +69,9 @@ function drawFlower() {
 
 }
 
-function getPointsForN(n) {
+function getPointsForN(n, center) {
 
   const points = [],
-    center = getCanvasCenter(),
     segmentAngleRadian = 2 * Math.PI / n,
     circleRadius = getCircleRadius();
 
@@ -76,14 +83,6 @@ function getPointsForN(n) {
   }
 
   return points;
-
-}
-
-function drawCenterCircle() {
-
-  const center = getCanvasCenter();
-
-  drawCircle(center);
 
 }
 
@@ -104,8 +103,8 @@ function getCanvasCenter() {
 
 function getCircleRadius() {
   return canvas.width > canvas.height
-    ? canvas.height / 5
-    : canvas.width / 5;
+    ? canvas.height / 6.25
+    : canvas.width / 6.25;
 }
 
 window.onload = () => init();
