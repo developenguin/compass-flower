@@ -91,6 +91,7 @@ function drawCircle(center) {
   const radius = getCircleRadius();
 
   ctx.strokeStyle = 'white';
+  ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
   ctx.stroke();
