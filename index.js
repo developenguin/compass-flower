@@ -76,7 +76,7 @@ function resetCanvas() {
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
 
-  ctx.fillStyle = 'black';
+  ctx.fillStyle = 'white';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   drawFigure(getCanvasCenter());
@@ -174,7 +174,7 @@ function colorizeForCircles(circles) {
 
         ctx.fillStyle = amountOfCirclesAroundPoint > 0
           ? `rgb(${color.r}, ${color.g}, ${color.b})`
-          : 'black';
+          : 'white';
 
         ctx.fillRect(i, j, 1, 1);
 
