@@ -170,7 +170,7 @@ function colorizeForCircles(circles) {
           .filter(circle => circle.hasPointInside(point))
           .length;
 
-        const color = colors[amountOfCirclesAroundPoint - 1];
+        const color = colors[(amountOfCirclesAroundPoint - 1) % colors.length];
 
         ctx.fillStyle = amountOfCirclesAroundPoint > 0
           ? `rgb(${color.r}, ${color.g}, ${color.b})`
