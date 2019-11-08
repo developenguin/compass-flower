@@ -21,6 +21,16 @@ class Circle {
 
   }
 
+  hasPointInside(point = { x: null, y: null }) {
+
+    const center = this.getCenter();
+    const radiusSquared = Math.pow(this.getRadius(), 2);
+    const distanceSquared = Math.pow(center.x - point.x, 2) + Math.pow(center.y - point.y, 2);
+
+    return distanceSquared < radiusSquared;
+
+  }
+
   getCenter() {
     return {
       x: this.x,
@@ -28,18 +38,22 @@ class Circle {
     }
   }
 
+  getRadius() {
+    return this.r;
+  }
+
 }
 
 function init() {
 
-  redrawCanvas();
+  resetCanvas();
   registerEventListeners();
 
 }
 
 function registerEventListeners() {
 
-  pointsInput.addEventListener('input', () => redrawCanvas());
+  pointsInput.addEventListener('input', () => resetCanvas());
 
   onresize = () => resetCanvas();
 
@@ -77,19 +91,21 @@ function drawFigure(center) {
     .map(circle => getCirclesForN(n, circle.getCenter()))
     .flat();
 
-  const flattened = [...layer1, ...layer2];
+  const filtered = [...layer1, ...layer2].reduce(
+    (acc, nextCircle) => {
 
-  const filtered = flattened.reduce((acc, nextCircle) => {
+      const matches = acc.filter(circle => circle.isSameAs(nextCircle));
 
-    const matches = acc.filter(circle => circle.isSameAs(nextCircle));
+      if (!matches.length) {
+        acc = [...acc, nextCircle];
+      }
 
-    if (!matches.length) {
-      acc = [...acc, nextCircle];
-    }
+      return acc;
 
-    return acc;
+    }, []
+  );
 
-  }, []);
+  colorizeForCircles(filtered);
 
   filtered.forEach(circle => {
     drawCircle(circle);
@@ -117,11 +133,57 @@ function getCirclesForN(n, center) {
 
 function drawCircle(circle) {
 
-  ctx.strokeStyle = 'white';
+  ctx.strokeStyle = 'black';
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(circle.x, circle.y, circle.r, 0, 2 * Math.PI);
   ctx.stroke();
+
+}
+
+function colorizeForCircles(circles) {
+
+  const canvasCenter = getCanvasCenter();
+
+  const centerCircle = new Circle({
+    x: canvasCenter.x,
+    y: canvasCenter.y,
+    r: getCircleRadius() * 3 // center + static 2 layers for now
+  });
+
+  const colors = [
+    { r: 255, g: 255, b: 0 },
+    { r: 128, g: 128, b: 0 },
+    { r: 255, g: 255, b: 255 },
+    { r: 255, g: 0, b: 0 }
+  ];
+
+  for (let i = 0; i < canvas.width; i++) {
+    for (let j = 0; j < canvas.height; j++) {
+
+      const point = { x: i, y: j };
+
+      // Skip all points that are guaranteed to be outside of the figure
+      if (centerCircle.hasPointInside(point)) {
+
+        const amountOfCirclesAroundPoint = circles
+          .filter(circle => circle.hasPointInside(point))
+          .length;
+
+        const color = colors[amountOfCirclesAroundPoint - 1];
+
+        ctx.fillStyle = amountOfCirclesAroundPoint > 0
+          ? `rgb(${color.r}, ${color.g}, ${color.b})`
+          : 'black';
+
+        ctx.fillRect(i, j, 1, 1);
+
+      }
+
+    }
+  }
+
+
 
 }
 
