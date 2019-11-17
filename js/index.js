@@ -32,13 +32,7 @@ function registerEventListeners() {
 
   });
 
-  baseColor.addEventListener('change', evt => {
-
-    const color = hexToHSL(evt.target.value);
-    const palette = generateMonochromaticScaleFromColor(color);
-    console.log(palette);
-
-  });
+  baseColor.addEventListener('change', () => resetCanvas());
 
 }
 
@@ -68,6 +62,9 @@ function resetCanvas() {
 
 function drawFigure(center) {
 
+  const color = hexToHSL(baseColor.value);
+  const palette = generateMonochromaticScaleFromColor(color);
+
   const n = getNValue();
   const layer1 = getCirclesForN(n, center);
   const layer2 = layer1
@@ -88,7 +85,7 @@ function drawFigure(center) {
     }, []
   );
 
-  colorizeForCircles(filtered);
+  colorizeForCircles(filtered, palette);
 
   filtered.forEach(circle => {
     drawCircle(circle);
@@ -123,7 +120,7 @@ function drawCircle(circle) {
 
 }
 
-function colorizeForCircles(circles) {
+function colorizeForCircles(circles, palette) {
 
   const canvasCenter = getCanvasCenter();
 
@@ -132,13 +129,6 @@ function colorizeForCircles(circles) {
     y: canvasCenter.y,
     r: getCircleRadius() * 3 // center + static 2 layers for now
   });
-
-  const colors = [
-    { r: 255, g: 255, b: 0 },
-    { r: 128, g: 128, b: 0 },
-    { r: 255, g: 255, b: 255 },
-    { r: 255, g: 0, b: 0 }
-  ];
 
   for (let i = 0; i < canvas.width; i++) {
     for (let j = 0; j < canvas.height; j++) {
@@ -152,10 +142,12 @@ function colorizeForCircles(circles) {
           .filter(circle => circle.hasPointInside(point))
           .length;
 
-        const color = colors[(amountOfCirclesAroundPoint - 1) % colors.length];
+        const color = amountOfCirclesAroundPoint % 2
+          ? palette[amountOfCirclesAroundPoint % palette.length]
+          : palette[palette.length - (amountOfCirclesAroundPoint % palette.length) - 1];
 
         ctx.fillStyle = amountOfCirclesAroundPoint > 0
-          ? `rgb(${color.r}, ${color.g}, ${color.b})`
+          ? `hsl(${color.h}, ${color.s}%, ${color.l}%)`
           : 'white';
 
         ctx.fillRect(i, j, 1, 1);
