@@ -1,6 +1,8 @@
 const canvas = document.getElementById('app'),
       ctx = canvas.getContext('2d'),
-      pointsInput = document.getElementById('points');
+      pointsInput = document.getElementById('points'),
+      toggleControlsButton = document.getElementById('toggle-controls'),
+      controlsContainer = document.getElementById('controls');
 
 class Circle {
 
@@ -12,10 +14,10 @@ class Circle {
 
   isSameAs(circle = {}) {
 
-    const thisX = parseFloat(this.x.toFixed(6)),
-          thisY = parseFloat(this.y.toFixed(6)),
-          otherX = parseFloat(circle.x.toFixed(6)),
-          otherY = parseFloat(circle.y.toFixed(6));
+    const thisX = parseFloat(this.x.toFixed(8)),
+          thisY = parseFloat(this.y.toFixed(8)),
+          otherX = parseFloat(circle.x.toFixed(8)),
+          otherY = parseFloat(circle.y.toFixed(8));
 
     return thisX === otherX && thisY === otherY && this.r === circle.r
 
@@ -56,6 +58,20 @@ function registerEventListeners() {
   pointsInput.addEventListener('input', () => resetCanvas());
 
   onresize = () => resetCanvas();
+
+  toggleControlsButton.addEventListener('click', () => {
+
+    const classList = controlsContainer.classList;
+
+    if (classList.contains('hidden')) {
+      classList.remove('hidden');
+      toggleControlsButton.innerText = 'Hide controls';
+    } else {
+      classList.add('hidden');
+      toggleControlsButton.innerText = 'Show controls';
+    }
+
+  });
 
 }
 
@@ -134,7 +150,6 @@ function getCirclesForN(n, center) {
 function drawCircle(circle) {
 
   ctx.strokeStyle = 'black';
-  ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(circle.x, circle.y, circle.r, 0, 2 * Math.PI);
   ctx.stroke();
@@ -182,8 +197,6 @@ function colorizeForCircles(circles) {
 
     }
   }
-
-
 
 }
 
